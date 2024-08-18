@@ -1,0 +1,11 @@
+button:hover .details {
+    display: block;
+}
+
+button .details {
+    display: none;
+}
+
+.button:focus:not(:hover) {
+    background: var(--w-red);
+}

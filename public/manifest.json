@@ -1,0 +1,34 @@
+{
+    "name": "tab manager",
+    "description": "tab manager",
+    "version": "1.0",
+    "background": {
+        "service_worker": "service_worker.js",
+        "type": "module"
+    },
+    "icons": {
+        "128": "tab.png"
+    },
+    "action": {
+        "default_title": "Click to open panel"
+    },
+    "manifest_version": 3,
+    "permissions": [
+        "windows",
+        "tabGroups",
+        "tabs",
+        "webNavigation",
+        "unlimitedStorage",
+        "sidePanel",
+        "history",
+        "storage",
+        "scripting"
+    ],
+    "side_panel": {
+        "default_path": "sidepanel.html"
+    },
+    "host_permissions": [
+        "http://*/*",
+        "https://*/*"
+    ]
+}
