@@ -60,14 +60,14 @@ chrome.tabs.onActivated.addListener(async function (activeInfo) {
     try { await chrome.runtime.sendMessage({ type: 'active', tabId: activeInfo.tabId });} catch (e) {/* ignore */} 
 });
 
-// 监听sidepanel发送过来的消息
+// 监听页面发送过来的消息
 chrome.runtime.onMessage.addListener(async (msg, sender,) => {
-    let { siliconKey: secretKey } = await chrome.storage.local.get({ siliconKey: "" })
+    let { siliconKey: secretKey, model: model } = await chrome.storage.local.get({ siliconKey: "", model: "Qwen/Qwen2.5-7B-Instruct" })
     if (msg.type === 'summarize') {
         const tabId = sender.tab ? sender.tab.id : null;
         if (tabId) {
             // 将页面的内容用ai进行摘要和嵌入，并存储这两个结果
-            const summary = await summarize(secretKey, msg.content);
+            const summary = await summarize(secretKey, msg.content, model);
             let key = `sum_${tabId}`;
             let s = {}
             s[key] = summary;

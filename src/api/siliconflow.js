@@ -6,14 +6,17 @@ const commonHeader = {
     'content-type': 'application/json',
 }
 
-const chatModel = "Qwen/Qwen2-7B-Instruct", embeddingModel = "BAAI/bge-m3";
+const chatModel = "Qwen/Qwen2.5-7B-Instruct", embeddingModel = "BAAI/bge-m3";
 
-export async function summarize(secretKey, text) {
+export async function summarize(secretKey, text, model) {
+    if (!model || model.length == 0) {
+      model = chatModel;
+    }
     const options = {
         method: 'POST',
         headers: {...commonHeader, authorization: 'Bearer ' + secretKey},
         body: JSON.stringify({
-          model: chatModel,
+          model,
           messages: [
             {role: 'system', content: '你是一个网页内容总结助手，用户会发送网站的内容，你对内容进行总结，概括为简短的几句话返回，除了专有名词或缩写尽可能用中文'},
             {role: 'user', content: "请用中文概述网页，网页内容为：" + text.replace("\n", "").replace("\t", "")}
