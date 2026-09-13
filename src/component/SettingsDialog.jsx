@@ -7,14 +7,12 @@ import {
   API_TYPES,
   DEFAULT_IMAGE_MODEL,
   DEFAULT_MODEL_CONTEXT_LIMIT_TOKENS,
-  DEFAULT_OPENCODE_ZEN_FREE_LLM_MODEL_ID,
   IMAGE_API_PROTOCOLS,
   MODEL_CONTEXT_LIMIT_OPTIONS,
   captureFullPageScreenshotToTab,
   createModelProfileId,
   createImageModelProfileId,
   getDefaultApiType,
-  isBuiltinLlmModelProfileId,
   normalizeApiType,
   normalizeImageModelProfiles,
   normalizeImageApiProtocol,
@@ -236,7 +234,7 @@ function SettingsDialogBody() {
       setKeywordSummaryUseCustomModel(nextLlmConfig.keywordSummaryUseCustomModel === true);
       setKeywordSummaryModelId(normalizedLlmProfiles.profiles.some(item => item.id === nextLlmConfig.keywordSummaryModelId)
         ? nextLlmConfig.keywordSummaryModelId
-        : DEFAULT_OPENCODE_ZEN_FREE_LLM_MODEL_ID);
+        : normalizedLlmProfiles.activeId);
       setImageModels(normalizedImageProfiles.profiles);
       setActiveImageModelId(normalizedImageProfiles.activeId);
       setApiType(DEFAULT_LLM_MODEL_DRAFT.apiType);
@@ -511,7 +509,6 @@ function SettingsDialogBody() {
   }
 
   function handleRemoveLlmModel(id) {
-    if (isBuiltinLlmModelProfileId(id)) return;
     setLlmModels(prev => {
       const next = prev.filter(item => item.id !== id);
       if (activeLlmModelId === id) {
@@ -761,27 +758,25 @@ function SettingsDialogBody() {
                 title={`${item.name}\n${item.apiType}\n${item.baseUrl}`}
               >
                 <span className="settings-model-badge-name">{item.name}</span>
-                {!isBuiltinLlmModelProfileId(item.id) && (
-                  <span
-                    role="button"
-                    tabIndex={0}
-                    className="settings-model-badge-remove"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      handleRemoveLlmModel(item.id);
-                    }}
-                    onKeyDown={(event) => {
-                      if (event.key !== "Enter" && event.key !== " ") return;
-                      event.preventDefault();
-                      event.stopPropagation();
-                      handleRemoveLlmModel(item.id);
-                    }}
-                    aria-label={`删除 ${item.name}`}
-                    title="删除"
-                  >
-                    ×
-                  </span>
-                )}
+                <span
+                  role="button"
+                  tabIndex={0}
+                  className="settings-model-badge-remove"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleRemoveLlmModel(item.id);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key !== "Enter" && event.key !== " ") return;
+                    event.preventDefault();
+                    event.stopPropagation();
+                    handleRemoveLlmModel(item.id);
+                  }}
+                  aria-label={`删除 ${item.name}`}
+                  title="删除"
+                >
+                  ×
+                </span>
               </button>
             ))}
           </div>
@@ -808,7 +803,7 @@ function SettingsDialogBody() {
             />
           )}
           {!keywordSummaryUseCustomModel && (
-            <div className="settings-api-url-hint">关键词总结默认使用 OpenCode Zen 免费模型</div>
+            <div className="settings-api-url-hint">关键词总结默认使用当前聊天模型</div>
           )}
           {llmModelFormOpen && (
             <div className="settings-model-form">
